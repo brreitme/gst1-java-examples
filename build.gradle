@@ -1,0 +1,22 @@
+apply plugin: 'java'
+apply plugin: 'jacoco'
+apply plugin: 'eclipse'
+apply plugin: 'application'
+
+repositories {
+	mavenCentral()
+}
+
+mainClassName = "org.freedesktop.gstreamer.examples.DecklinkExample"
+
+task wrapper(type: Wrapper) {
+	gradleVersion = '4.3'
+}
+
+
+dependencies {
+
+	compile 'net.java.dev.jna:jna:4.2.2'
+	compile 'org.freedesktop.gstreamer:gst1-java-core:0.9.1'
+}
+

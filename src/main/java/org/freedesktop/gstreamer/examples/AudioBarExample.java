@@ -20,7 +20,10 @@ import org.freedesktop.gstreamer.MessageType;
 import org.freedesktop.gstreamer.Structure;
 import org.freedesktop.gstreamer.elements.AppSink;
 import org.freedesktop.gstreamer.elements.PlayBin;
+import org.freedesktop.gstreamer.lowlevel.GValueAPI;
 import org.freedesktop.gstreamer.lowlevel.GValueAPI.GValue;
+import org.freedesktop.gstreamer.lowlevel.GValueAPI.GValueArray;
+import org.freedesktop.gstreamer.lowlevel.GstStructureAPI;
 
 /**
  *
@@ -105,15 +108,14 @@ public class AudioBarExample {
 
 						private List<Double> getLevel(String type, Structure struct) {
 							// TODO add this to Structure
-							GValue levelsObject = struct.getGValue(type);
-							String peakLevels = levelsObject.toString().replace("<", "").replace(">", "")
-									.replace(" ", "");
-
-							String levelsArray[] = peakLevels.split(",");
-							List<Double> levelsList = new ArrayList<>(levelsArray.length);
-							for (String s : levelsArray) {
-								levelsList.add(Double.parseDouble(s));
+							GValue value = GstStructureAPI.GSTSTRUCTURE_API.gst_structure_get_value(struct, type);
+							GValueArray array = new GValueArray(GValueAPI.GVALUE_API.g_value_get_boxed(value));
+							int count = array.getNValues();
+							List<Double> levelsList = new ArrayList<>(count);
+							for (int i = 0; i < count; i++) {
+								levelsList.add((Double) array.getValue(i));
 							}
+							array.free();
 							return levelsList;
 						}
 					});
